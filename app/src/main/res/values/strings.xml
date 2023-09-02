@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Quickboard</string>
+    <string name="format_map_click">지도 클릭\n(%1$.5f, %2$.5f)</string>
+    <string name="format_map_long_click">지도 롱 클릭\n(%1$.5f, %2$.5f)</string>
+
+
+    <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
+    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,5 @@
+car road
+bicycle road
+edge of a car road
+crosswalk
+sidewalk

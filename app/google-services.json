@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "377533313068",
+    "project_id": "quick-n-safe",
+    "storage_bucket": "quick-n-safe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377533313068:android:5c7b6d0546140282542189",
+        "android_client_info": {
+          "package_name": "com.example.quickboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "377533313068-hfqbuk4v7o4jf02326g3hjpdhkntt1qa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.quickboard",
+            "certificate_hash": "c192b0f6e36f8378885905df7f7dc484f01dc6e7"
+          }
+        },
+        {
+          "client_id": "377533313068-v4p33bldtna65u1ci8lt5hkd9oe75uak.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAez6_4G_0b5RwDb4FfoqFseGlJJl6BqpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "377533313068-v4p33bldtna65u1ci8lt5hkd9oe75uak.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
