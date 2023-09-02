@@ -170,7 +170,7 @@ public class Bottom_LocationInform extends Fragment {
                 }
             }
 
-            Log.d("guidePoits", guide_points.toString());
+            Log.d("guidePoints", guide_points.toString());
             Log.d("Coords", coords.toString());
             path.setCoords(coords);
             path.setOutlineWidth(0);

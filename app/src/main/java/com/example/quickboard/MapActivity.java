@@ -217,11 +217,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void start_navi(View view) {
         JSONArray pathArray = Bottom_LocationInform.pathArray;
         JSONArray guideArray = Bottom_LocationInform.guideArray;
-        ArrayList<JSONArray> guidePoits = Bottom_LocationInform.guide_points;
+        ArrayList<JSONArray> guidePoints = Bottom_LocationInform.guide_points;
         Intent intent = new Intent(this, DetectorActivity.class);
         intent.putExtra("json", pathArray.toString());
         intent.putExtra("guide_json", guideArray.toString());
-        intent.putExtra("guide_points", guidePoits.toString());
+        intent.putExtra("guide_points", guidePoints.toString());
 
         startActivity(intent);
     }

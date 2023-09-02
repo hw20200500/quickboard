@@ -16,6 +16,8 @@
 
 package com.example.quickboard;
 
+import static android.speech.tts.TextToSpeech.ERROR;
+
 import android.Manifest;
 import android.app.Fragment;
 import android.content.Context;
@@ -38,6 +40,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -81,6 +84,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public abstract class CameraActivity extends AppCompatActivity
     implements OnImageAvailableListener, OnMapReadyCallback,
@@ -135,6 +139,7 @@ public abstract class CameraActivity extends AppCompatActivity
   int n = 0;
   public static FusedLocationSource locationSource;
   ArrayList<String> deviceStrings = new ArrayList<String>();
+  private TextToSpeech textToSpeech;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -245,6 +250,14 @@ public abstract class CameraActivity extends AppCompatActivity
         });
 
 
+    textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+      @Override
+      public void onInit(int i) {
+        if (i!=ERROR) {
+          textToSpeech.setLanguage(Locale.KOREAN);
+        }
+      }
+    });
 
   }
   public void read_guide_json(String json, String points) {
@@ -253,83 +266,119 @@ public abstract class CameraActivity extends AppCompatActivity
       //배열로된 자료를 가져올때
       JSONArray guideArray = new JSONArray(json);
       JSONArray guidePoint = new JSONArray(points);
-      Log.d("guide", guideArray.getString(0));
-      Log.d("guide", guidePoint.getString(0));
-      Log.d("guide_inst", guideArray.getJSONObject(0).getString("instructions"));
       path = new PathOverlay();
 
       LocationRequest locationRequest = LocationRequest.create()
               .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
               .setInterval(1000);
       final int[] n = {0};
+      Log.d("guide", guideArray.getString(n[0]));
+      Log.d("guide", guidePoint.getString(n[0]));
+      Log.d("guide_inst", guideArray.getJSONObject(n[0]).getString("instructions"));
+
       navermap.addOnLocationChangeListener(new NaverMap.OnLocationChangeListener() {
         @Override
         public void onLocationChange(@NonNull Location location) {
           try {
-            LinearLayout guide_layout = findViewById(R.id.guide_layout);
-            ImageView guide_img = findViewById(R.id.guide_img);
-            TextView guide_message = findViewById(R.id.guide_message);
             TextView road_text = findViewById(R.id.road_text);
 
             float distance = location.distanceTo(new Location(""){{setLatitude(guidePoint.getJSONArray(n[0]).getDouble(1));
                                                           setLongitude(guidePoint.getJSONArray(n[0]).getDouble(0));}});
-            if (distance <= 10.0f) {
-              String guide = guideArray.getJSONObject(n[0]).getString("instructions").toString();
+            String guide = guideArray.getJSONObject(n[0]).getString("instructions").toString();
+            if (distance <= 100.0f && distance >80.0f) {
+
               Log.d("Instruction:", guide);
               // Toast.makeText(CameraActivity.this, guide+"하세요", Toast.LENGTH_SHORT).show();
 
-              guide_layout.setVisibility(View.VISIBLE);
-              guide_message.setText(guide+"하세요");
-              if (guide.contains("좌회전")) {
-                guide_img.setImageResource(R.drawable.turn_left);
+              if (guide.contains("시 방향")) {
+                if (textToSpeech.isSpeaking()==false) {
+                  textToSpeech.speak("약 100미터 앞에서 " + guide+"으로 이동하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                }
+              } else if(guide.contains("톨게이트")) {
+                if (textToSpeech.isSpeaking()==false) {
+                  textToSpeech.speak("약 100미터 앞에서 " + guide+"로 진입하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                }
+              }else if(guide.contains("옆길")) {
+                if (textToSpeech.isSpeaking()==false) {
+                  textToSpeech.speak("약 100미터 앞에서 " + guide+"로 이동하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                }
+              }else if(guide.equals("목적지")) {
+                if (textToSpeech.isSpeaking()==false) {
+                  Log.d("목적지", "100m left");
+                }
+              }else {
+                if (textToSpeech.isSpeaking()==false) {
+                  textToSpeech.speak("약 100미터 앞에서 " + guide+"하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                }
+              }
+
+
+
+
+
+            }
+            else if (distance <= 50.0f && distance >40.0f) {
+              if (guide.contains("좌회전")||(guide.contains("왼쪽") && guide.contains("시 방향"))) {
+                //guide_img.setImageResource(R.drawable.turn_left);
                 if (road_text.getText().equals("차도")) {
                   Toast.makeText(CameraActivity.this, "주위를 잘 살피고 좌회전 하세요.", Toast.LENGTH_SHORT).show();
+                  if (textToSpeech.isSpeaking()==false) {
+                    if (guide.contains("왼쪽")) {
+                      textToSpeech.speak("주위를 잘 살피고 "+guide+"으로 좌회전 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    } else {
+                      textToSpeech.speak("주위를 잘 살피고 "+guide+" 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                  }
+                } else {
+                  if (textToSpeech.isSpeaking()==false) {
+                    if (guide.contains("왼쪽")) {
+                      textToSpeech.speak("횡단보도를 건너거나 차도로 이동하여 "+guide+"으로 좌회전 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    } else {
+                      textToSpeech.speak("횡단보도를 건너거나 차도로 이동하여 "+guide+" 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                  }
                 }
 
-              } else if (guide.contains("우회전")) {
-                guide_img.setImageResource(R.drawable.turn_right);
+              } else if (guide.contains("우회전")||(guide.contains("오른쪽") && guide.contains("시 방향"))) {
+                /*guide_img.setImageResource(R.drawable.turn_right);
 
                 Animation blinkAnimation = AnimationUtils.loadAnimation(CameraActivity.this, R.anim.blink_anim);
-                guide_img.startAnimation(blinkAnimation);
+                guide_img.startAnimation(blinkAnimation);*/
                 if (road_text.getText().equals("차도")) {
                   Toast.makeText(CameraActivity.this, "주위를 잘 살피고 우회전 하세요.", Toast.LENGTH_SHORT).show();
-                }
-              } else if (guide.equals("목적지")) {
-                Toast.makeText(CameraActivity.this, "목적지에 도착하였습니다. 안내를 종료합니다.", Toast.LENGTH_SHORT).show();
-              }
+                  if (textToSpeech.isSpeaking()==false) {
+                    if (guide.contains("오른쪽")) {
+                      textToSpeech.speak("주위를 잘 살피고 "+guide+"으로 우회전 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    } else {
+                      textToSpeech.speak("주위를 잘 살피고 "+guide+" 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                  }
+                } else {
+                  if (guide.contains("오른쪽")) {
+                    if (textToSpeech.isSpeaking()==false) {
 
-              n[0]++;
-            } else {
-              guide_img.clearAnimation();
-              guide_layout.setVisibility(View.GONE);
+                    textToSpeech.speak(guide+"으로 우회전 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                  }
+                }else {
+                    if (textToSpeech.isSpeaking()==false) {
+                      textToSpeech.speak(guide+" 하세요.", TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                  }
+                }
+              } else if (guide.contains("목적지")) {
+                if (textToSpeech.isSpeaking()==false) {
+                  textToSpeech.speak("50미터 앞에" + guide + "가 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                }
+              }
+              if (guideArray.length()>n[0]+1) {
+                n[0]++;
+              }
+            } else if (distance <= 20.0f) {
+              if (guide.equals("목적지")) {
+                Toast.makeText(CameraActivity.this, "목적지에 도착하였습니다. 안내를 종료합니다.", Toast.LENGTH_SHORT).show();
+                textToSpeech.speak("목적지에 도착하였습니다. 안내를 종료합니다.", TextToSpeech.QUEUE_FLUSH, null);
+              }
             }
-            /*if (location.getLongitude()==guidePoint.getJSONArray(n[0]).getDouble(0) &&
-                    location.getLatitude()==guidePoint.getJSONArray(n[0]).getDouble(1)) {
-              String guide = guideArray.getJSONObject(n[0]).getString("instructions").toString();
-              Log.d("Instruction:", guide);
-              // Toast.makeText(CameraActivity.this, guide+"하세요", Toast.LENGTH_SHORT).show();
-              n[0]++;
-              guide_layout.setVisibility(View.VISIBLE);
-              guide_message.setText(guide+"하세요");
-              if (guide.contains("좌회전")) {
-                guide_img.setImageResource(R.drawable.turn_left);
-                if (road_text.getText().equals("차도")) {
-                  Toast.makeText(CameraActivity.this, "주위를 잘 살피고 좌회전 하세요.", Toast.LENGTH_SHORT).show();
-                }
-
-                guide_message.setText(guide+"하세요");
-              } else if (guide.contains("우회전")) {
-                guide_img.setImageResource(R.drawable.turn_right);
-
-                if (road_text.getText().equals("차도")) {
-                  Toast.makeText(CameraActivity.this, "주위를 잘 살피고 우회전 하세요.", Toast.LENGTH_SHORT).show();
-                }
-              } else if (guide.equals("목적지")) {
-                Toast.makeText(CameraActivity.this, "목적지에 도착하였습니다. 안내를 종료합니다.", Toast.LENGTH_SHORT).show();
-              }
-            } else {
-              guide_layout.setVisibility(View.GONE);
-            }*/
           } catch (JSONException e) {
             throw new RuntimeException(e);
           }
@@ -453,40 +502,51 @@ public abstract class CameraActivity extends AppCompatActivity
 
   protected void set_text(String road) {
     message_layout.setVisibility(View.GONE);
-    if (road.equals("sidewalk")) {
-      road_text.setText("인도");
-      message_text.setText("인도로 다니지 마세요.");
-      message_text.setLayoutParams(new ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.WRAP_CONTENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
-      ));
+    if (road!=null) {
 
-      message_layout.setVisibility(View.VISIBLE);
-      message_layout.setLayoutParams(new ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.WRAP_CONTENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
-      ));
-    }
-    else if(road.equals("crosswalk")) {
-      road_text.setText("횡단보도");
-      message_text.setText("횡단보도를 이용할 때는 서행하세요.");
-      message_text.setLayoutParams(new ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.WRAP_CONTENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
-      ));
+      if (road.equals("sidewalk")) {
+        road_text.setText("인도");
+        message_text.setText("인도로 다니지 마세요.");
+        message_text.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
 
-      message_layout.setVisibility(View.VISIBLE);
-      message_layout.setLayoutParams(new ViewGroup.LayoutParams(
-              ViewGroup.LayoutParams.WRAP_CONTENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT
-      ));
+        message_layout.setVisibility(View.VISIBLE);
+        message_layout.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        if (textToSpeech.isSpeaking()==false) {
+          textToSpeech.speak("인도로 다니지 마세요.", TextToSpeech.QUEUE_FLUSH, null);
+        }
+      }
+      else if(road.equals("crosswalk")) {
+        road_text.setText("횡단보도");
+        message_text.setText("횡단보도를 이용할 때는 서행하세요.");
+        message_text.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        message_layout.setVisibility(View.VISIBLE);
+        message_layout.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        if (textToSpeech.isSpeaking()==false) {
+          textToSpeech.speak("횡단보도를 이용할 때는 서행하세요.", TextToSpeech.QUEUE_FLUSH, null);
+        }
+      }
+      else if(road.equals("bicycle road")) {
+        road_text.setText("자전거도로");
+
+      }
+      else if(road.equals("car road")||road.equals("edge of a car road")) {
+        road_text.setText("차도");
+      }
     }
-    else if(road.equals("bicycle road")) {
-      road_text.setText("자전거도로");
-    }
-    else if(road.equals("car road")||road.equals("edge of a car road")) {
-      road_text.setText("차도");
-    }
+
   }
   protected int[] getRgbBytes() {
     imageConverter.run();

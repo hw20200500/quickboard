@@ -57,10 +57,24 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/map_fragment"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.naver.maps.map.MapFragment" />
+        android:layout_height="match_parent">
+        <fragment
+            android:id="@+id/map_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.naver.maps.map.MapFragment">
+        </fragment>
+
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/navi_loc"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+
 
 </LinearLayout>

@@ -151,7 +151,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         // Get UI information before delegating to background
         final int modelIndex = modelView.getCheckedItemPosition();
         final int deviceIndex = deviceView.getCheckedItemPosition();
-        String threads = "5";//threadsTextView.getText().toString().trim();
+        String threads = "2";//threadsTextView.getText().toString().trim();
         final int numThreads = Integer.parseInt(threads);
 
         handler.post(() -> {
