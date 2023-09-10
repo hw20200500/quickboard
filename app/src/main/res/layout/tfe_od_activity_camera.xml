@@ -116,6 +116,14 @@
             android:textStyle="bold"/>
     </LinearLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="60dp"
+        android:layout_gravity="bottom"
+        android:text="주행 종료"
+        android:onClick="drive_finish"/>
 
 
 
