@@ -30,8 +30,8 @@
             android:name="androidx.camera.camera_provider"
             android:value="camera2" />
         <meta-data
-            android:name="com.naver.maps.map.sim8vwzufn"
-            android:value="sim8vwzufn" />
+            android:name="com.naver.maps.map."
+            android:value="" />
 
         <activity
             android:name=".MapActivity"
