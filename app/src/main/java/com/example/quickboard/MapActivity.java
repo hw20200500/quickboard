@@ -74,7 +74,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public static NaverMap naverMap;
     private Context mContext;
 
-    private static final String NAVER_CLIENT_ID = "sim8vwzufn";
+    private static final String NAVER_CLIENT_ID = "";
 
     private LocationManager locationManager;
 //    private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
